@@ -1,0 +1,26 @@
+<% include inc/header %>
+    <link rel='stylesheet' href='/stylesheets/login.css' />
+    <div>
+        <!-- 风车代码部分begin -->
+        <div class="lanren">
+            <ul>
+                <li>
+                    <img src="images/main5-pic1.png"> </li>
+                <li>
+                    <img src="images/main5-pic2.png"> </li>
+                <li>
+                    <img src="images/main5-pic3.png"> </li>
+            </ul>
+        </div>
+        <!-- 风车代码部分end -->
+        <%  if(!session.user){ %>
+            <div class="indexC">
+                您还没
+                <a href="/users/login">登录</a>!
+            </div>
+            <% } %>
+                <% if(session.user){ %>
+                    <div class="indexC">完全不知道该放些什么东西!</div>
+                    <% } %>
+    </div>
+    <% include inc/footer %>

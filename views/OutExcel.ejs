@@ -1,0 +1,227 @@
+<% include inc/header %>
+    <div id="selectTime">
+        <input type="text" class="demo-input" placeholder="请选择日期" id="startDate" style="display: inline">到
+        <input type="text" class="demo-input" placeholder="请选择日期" id="endDate" style="display: inline">
+        <!-- <button onclick="getDate()">确定</button> -->
+        <button type="button" onclick="getDate()">获取数据</button>
+        <button type="button" onclick="exportExcel('allMsg')">导出Excel</button>
+    </div>
+    <div id="Article" class="table-responsive">
+
+    </div>
+
+    <script language="JavaScript" type="text/javascript"> 
+        // function getOutData(){
+        //     $.ajax({
+        //             type: "POST",
+        //             url: "http://127.0.0.1:3000/admin1",
+        //             async: false,
+        //             success: function (data) {
+        //                 console.log(data)
+        //                 // count = data[0][0].total_count
+        //                 //<thead> <tr> <th>ID</th><th>姓名</th> <th>号码</th> <th>时间</th> <th>地址</th> <th>IP</th> <th>来源</th> <th>状态/操作</th> </tr> </thead>
+        //                 var str_thead = "<table id='allMsg' class='table'><thead> <tr> <th>ID</th><th>姓名</th> <th>号码</th> <th>时间</th> <th>地址</th> <th>IP</th> <th>来源</th> <th>状态</th></tr> </thead><tbody>";
+        //                 var str_tbody = ""
+        //                 var update = '未审核'
+        //                 var remove = '删除'
+        //                 var E_delect = '"确定删除吗"'
+        //                 for (var i = 0; i < data.length; i++) {
+        //                     str_tbody += "<tr><td>" + data[i].id + "</td>" +
+        //                         "<td>" + data[i].name + "</td><td>" + data[i].tel + "</td>" +
+        //                         "<td>" + data[i].time + "</td><td>" + data[i].ads + "</td>" +
+        //                         "<td>" + data[i].ip + "</td><td>" + data[i].url + "</td>" +
+        //                         "<td>" + data[i].sta  +
+        //                         "</td></tr>"
+        //                     }
+        //                 var str_table = str_thead + str_tbody
+        //                 document.getElementById('Article').innerHTML = str_table
+        //                 var a = document.getElementsByClassName("upsta")
+        //                 for(let i = 0;i<a.length;i++){
+        //                     if(a[i].value == '未审核'){
+        //                         a[i].className = 'upsta btn btn-danger'
+        //                     }else{
+        //                         a[i].className = 'upsta btn btn-success'
+        //                     }
+        //                 }
+        //                 console.log('已获取到最新留言数据')
+        //                 goPage(1, 5);
+        //             },
+        //             error: function (XMLHttpRequest, textStatus, errorThrown) {
+        //                 // 状态码
+        //                 console.log(XMLHttpRequest.status);
+        //                 // 状态
+        //                 console.log(XMLHttpRequest.readyState);
+        //                 // 错误信息   
+        //                 console.log(textStatus);
+        //             }
+        //         });
+        // }
+        let date1 = ""
+        let date2 = ""
+        //获取时间查询数据
+        function getDate() {
+            time1 = date1 + ' 00:00'
+            time2 = date2 + ' 23:59'
+            console.log(CompareDate(time2, time1))
+            if (CompareDate(time2, time1)) {
+                var data = {
+                    time1: time1,
+                    time2: time2
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/admin1/selectByDate",
+                    data: data,
+                    async: false,
+                    success: function (data) {
+                        if(!data){
+                            alert('没有查到数据!')
+                        }else{
+                        console.log(data)
+                        count = data[0][0].msg
+                        //<thead> <tr> <th>ID</th><th>姓名</th> <th>号码</th> <th>时间</th> <th>地址</th> <th>IP</th> <th>来源</th> <th>状态/操作</th> </tr> </thead>
+                        var str_thead = "<table id='allMsg' class='table'><thead> <tr> <th>ID</th><th>姓名</th> <th>号码</th> <th>时间</th> <th>地址</th> <th>IP</th> <th>来源</th> </tr> </thead><tbody>";
+                        var str_tbody = ""
+                        var update = '未审核'
+                        var remove = '删除'
+                        var E_delect = '"确定删除吗"'
+                        for (var i = 0; i < data[1].length; i++) {
+                            str_tbody += "<tr><td>" + data[1][i].id + "</td>" +
+                                "<td>" + data[1][i].name + "</td><td>" + data[1][i].tel + "</td>" +
+                                "<td>" + data[1][i].time + "</td><td>" + data[1][i].ads + "</td>" +
+                                "<td>" + data[1][i].ip + "</td><td>" + data[1][i].url + "</td>" +
+                                "<td>" +data[1][i].sta  +
+                                "</td></tr>"
+
+                        }
+                        var str_table = str_thead + str_tbody
+                        document.getElementById('Article').innerHTML = null
+                        document.getElementById('Article').innerHTML = str_table
+                        var a = document.getElementsByClassName("upsta")
+                        for (let i = 0; i < a.length; i++) {
+                            if (a[i].value == '未审核') {
+                                a[i].className = 'upsta btn btn-danger'
+                            } else {
+                                a[i].className = 'upsta btn btn-success'
+                            }
+                        }
+                        console.log('已获取到最新留言数据')
+                    }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        // 状态码
+                        console.log(XMLHttpRequest.status);
+                        // 状态
+                        console.log(XMLHttpRequest.readyState);
+                        // 错误信息   
+                        console.log(textStatus);
+                    }
+                });
+            } else {
+                alert('时间选择错误!请核对!')
+            }
+
+        }
+        function CompareDate(d1, d2) {
+            return ((new Date(d1.replace(/-/g, "\/"))) > (new Date(d2.replace(/-/g, "\/"))));
+        }
+
+        lay('#version').html('-v' + laydate.v);
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#startDate', //指定元素
+            done: function (value, date, endDate) {
+                //alert(value); //得到日期生成的值，如：2017-08-18
+                date1 = value
+
+            }
+        });
+        laydate.render({
+            elem: '#endDate', //指定元素
+            done: function (value, date, endDate) {
+                //alert(value); //得到日期生成的值，如：2017-08-18
+                date2 = value
+            }
+        });
+
+        var idTmr;
+        //获取当前浏览器类型 
+        function getExplorer() {
+            var explorer = window.navigator.userAgent;
+            //ie 
+            if (explorer.indexOf("MSIE") >= 0) {
+                return 'ie';
+            }
+            //firefox 
+            else if (explorer.indexOf("Firefox") >= 0) {
+                return 'Firefox';
+            }
+            //Chrome 
+            else if (explorer.indexOf("Chrome") >= 0) {
+                return 'Chrome';
+            }
+            //Opera 
+            else if (explorer.indexOf("Opera") >= 0) {
+                return 'Opera';
+            }
+            //Safari 
+            else if (explorer.indexOf("Safari") >= 0) {
+                return 'Safari';
+            }
+        }
+
+        //获取到类型需要判断当前浏览器需要调用的方法，目前项目中火狐，谷歌，360没有问题 
+        //win10自带的IE无法导出 
+        function exportExcel(tableid) {
+            if (getExplorer() == 'ie') {
+                var curTbl = document.getElementById(tableid);
+                var oXL = new ActiveXObject("Excel.Application");
+                var oWB = oXL.Workbooks.Add();
+                var xlsheet = oWB.Worksheets(1);
+                var sel = document.body.createTextRange();
+                sel.moveToElementText(curTbl);
+                sel.select();
+                sel.execCommand("Copy");
+                xlsheet.Paste();
+                oXL.Visible = true;
+
+                try {
+                    var fname = oXL.Application.GetSaveAsFilename("Excel.xls", "Excel Spreadsheets (*.xls), *.xls");
+                } catch (e) {
+                    print("Nested catch caught " + e);
+                } finally {
+                    oWB.SaveAs(fname);
+                    oWB.Close(savechanges = false);
+                    oXL.Quit();
+                    oXL = null;
+                    idTmr = window.setInterval("Cleanup();", 1);
+                }
+
+            }
+            else {
+                tableToExcel(tableid)
+            }
+        }
+        function Cleanup() {
+            window.clearInterval(idTmr);
+            CollectGarbage();
+        }
+
+        //判断浏览器后调用的方法，把table的id传入即可 
+        var tableToExcel = (function () {
+            var uri = 'data:application/vnd.ms-excel;base64,',
+                template = '<html><head><meta charset="UTF-8"></head><body><table>{table}</table></body></html>',
+                base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) },
+                format = function (s, c) {
+                    return s.replace(/{(\w+)}/g,
+                        function (m, p) { return c[p]; })
+                }
+            return function (table, name) {
+                if (!table.nodeType) table = document.getElementById(table)
+                var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+                window.location.href = uri + base64(format(template, ctx))
+            }
+        })()
+
+    </script>
+    <% include inc/footer %>

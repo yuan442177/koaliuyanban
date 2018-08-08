@@ -1,0 +1,29 @@
+<% include inc/header %>
+        <div class="delete">delete</div>
+    <script>
+             $('.delete').click(() => {
+            $.ajax({
+                url: "/del",
+                data: {id:1,zt:1,tag:'msg'},
+                type: "POST",
+                cache: false,
+                dataType: 'json',
+                success: function (msg) {
+                    debugger
+                    if (msg) {
+                        alert('删除成功!')
+                    }
+                    else {
+                        alert('删除失败!')
+                    }
+                    
+                },
+                error: function () {
+                    alert('异常');
+                }
+            })
+
+        })
+
+    </script>
+<% include inc/footer %>

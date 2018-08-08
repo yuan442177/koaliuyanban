@@ -1,0 +1,14 @@
+留言表
+msg:
+    name    姓名    varchar
+    tel     号码    int
+    time    时间    date
+    ads     地区    varchar
+    ip      ip地址  varchar
+
+删除操作中的tag代表删除类型 也就是要删除的数据所在表
+msg->msg表
+user->users表
+
+按时间 并倒序 分页查询
+SELECT * FROM msg where time between '2018-05-17 10:56'and '2018-05-18 15:51' order by id desc LIMIT ${pageIndex}, ${pageSize}

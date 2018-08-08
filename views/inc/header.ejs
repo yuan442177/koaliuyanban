@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>后台管理</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+  <!-- <link rel='stylesheet' href='/stylesheets/pageNav.css' /> -->
+  <link rel='stylesheet' href='/stylesheets/pagination.css' />
+  <link rel='stylesheet' href='/stylesheets/lanren.css' />
+  <!-- <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script> -->
+  <script src="/laydate/laydate.js"></script>
+  <script src="http://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <!-- <script src="/javascripts/pages.js"></script> -->
+  <script src="/javascripts/pagination.min.js"></script>
+  <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="/javascripts/echarts.min.js"></script>
+
+</head>
+
+<body onload=" addAllData() ">
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">后台首页</a>
+      </div>
+      <div>
+        <%  if(!session.user){ %>
+          <ul class="nav navbar-nav" style="width: 90%">
+            <li class="">
+              <a href="/users/login">登录</a>
+            </li>
+            <!-- <li>
+              <a href="/users/register">注册</a>
+            </li> -->
+            <li class="dropdown navbar-right">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                未登录
+              </a>
+            </li>
+          </ul>
+          <% } %>
+            <% if(session.user){ %>
+              <ul class="nav navbar-nav" style="width: 90%">
+                <li class="">
+                  <a href="/admin1">留言管理</a>
+                </li>
+                <li>
+                  <a onclick="getDataHuishou()" style="cursor: pointer">回收站</a>
+                </li>
+                <li>
+                  <a href="/admin1/OutExcel">导出Excel</a>
+                </li>
+                <li class="dropdown navbar-right">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    您好:
+                    <%= session.user %>
+                      <b class="caret"></b>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a href="/loginout">注销</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+              <% } %>
+                </li>
+                </ul>
+      </div>
+    </div>
+  </nav>

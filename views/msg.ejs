@@ -1,0 +1,154 @@
+<% include inc/header %>
+<h2>1</h2>
+    <form method="post" class="form create" name="form1">
+        <div>
+            <label>姓名：</label>
+            <input placeholder="姓名" type="text" name="name">
+        </div>
+        <div>
+            <label>号码：</label>
+            <input placeholder="号码" type="text" name="tel">
+        </div>
+        <div>
+            <label>QQ</label>
+            <input placeholder="QQ" type="text" name="QQ">
+        </div>
+        <div class="submit">确定</div>
+    </form>
+    <h2>2</h2>
+    <form method="post" class="form create" name="form2">
+            <div>
+                <label>姓名：</label>
+                <input placeholder="姓名" type="text" name="name">
+            </div>
+            <div>
+                <label>号码：</label>
+                <input placeholder="号码" type="text" name="tel">
+            </div>
+            <div class="submit2">确定</div>
+    </form>
+    <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+    <!-- var b_ip = returnCitySN["cip"]
+var c_date = (new Date()).valueOf(); -->
+    <script>
+        $('.submit').click(() => {
+            var elements = document.forms['form1'].elements;
+            var name = elements.name.value
+            var tel = elements.tel.value
+            var QQ = elements.QQ.value
+            var date = (new Date()).valueOf();
+            var ads = returnCitySN["cname"]
+            var ip = returnCitySN["cip"]
+            var url = window.location.href;
+            var data = {
+                name: name,
+                tel: tel,
+                QQ: QQ,
+                date: date,
+                ads: ads,
+                ip: ip,
+                url: url
+            }
+
+            if (name == "") {
+                alert('请填写您的姓名');
+                elements.b_name.focus();
+                return false;
+            }
+            if (tel == "") {
+                alert('请填写您的手机号码');
+                elements.tel.focus();
+                return false;
+            } else {
+                var myreg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1})|(14[0-9]{1}))+\d{8})$/;
+                if (!myreg.test(tel)) {
+                    alert('请输入有效的手机号码');
+                    elements.b_tel.focus();
+                    return false;
+                }
+            }
+            
+            $.ajax({
+                url: "/msg",
+                data: data,
+                type: "POST",
+                success: function (msg) {
+                    debugger
+                    if (msg=='true') {
+                        alert('留言成功')
+                        // setTimeout(() => {
+                        //     window.location.href = "/posts"
+                        // }, 1000)
+                    } else {
+                        alert('留言失败')
+                        // setTimeout(() => {
+                        //     window.location.reload()
+                        // }, 1000)
+                    }
+                },
+                error: function () {
+                    alert('异常');
+                }
+            })
+        })
+
+                $('.submit2').click(() => {
+            var elements = document.forms['form2'].elements;
+            var name = elements.name.value
+            var tel = elements.tel.value
+            var date = (new Date()).valueOf();
+            var ads = returnCitySN["cname"]
+            var ip = returnCitySN["cip"]
+            var url = window.location.href;
+            var data = {
+                name: name,
+                tel: tel,
+                date: date,
+                ads: ads,
+                ip: ip,
+                url: url
+            }
+
+            if (name == "") {
+                alert('请填写您的姓名');
+                elements.b_name.focus();
+                return false;
+            }
+            if (tel == "") {
+                alert('请填写您的手机号码');
+                elements.tel.focus();
+                return false;
+            } else {
+                var myreg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1})|(14[0-9]{1}))+\d{8})$/;
+                if (!myreg.test(tel)) {
+                    alert('请输入有效的手机号码');
+                    elements.b_tel.focus();
+                    return false;
+                }
+            }
+            
+            $.ajax({
+                url: "/msg/2",
+                data: data,
+                type: "POST",
+                success: function (msg) {
+                    debugger
+                    if (msg=='true') {
+                        alert('留言成功')
+                        // setTimeout(() => {
+                        //     window.location.href = "/posts"
+                        // }, 1000)
+                    } else {
+                        alert('留言失败')
+                        // setTimeout(() => {
+                        //     window.location.reload()
+                        // }, 1000)
+                    }
+                },
+                error: function () {
+                    alert('异常');
+                }
+            })
+        })
+    </script>
+    <% include inc/footer %>

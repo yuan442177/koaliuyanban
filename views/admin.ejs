@@ -1,0 +1,204 @@
+<% include inc/header %>
+    <style>
+        ul li {
+            width: 100px;
+        }
+    </style>
+    <section>
+        <div>
+            <%  if(!session.user){ %>
+                <h1>
+                    非法请求!
+                </h1>
+                <% } %>
+                    <% if(session.user){ %>
+                        <div>
+                            <!-- <div style="height: 10%;">
+                                <ul style="display: block">
+                                    <li>ID</li>
+                                    <li>姓名</li>
+                                    <li>号码</li>
+                                    <li>时间</li>
+                                    <li>地址</li>
+                                    <li>IP</li>
+                                    <li>来源</li>
+                                    <li>状态/操作</li>
+                                </ul>
+                            </div> -->
+                                <div id="Article" class="table-responsive">
+                                    
+                                </div>
+
+
+                                <div class="tcdPageCode"></div>
+                        </div>
+                        <% } %>
+        </div>
+    </section>
+    <script>
+        $(function () {
+            $.ajax({
+                type: "POST",
+                url: "/admin",
+                async: false,
+                success: function (data) {
+                    console.log(data)
+                    // count = data[0][0].total_count
+                    //<thead> <tr> <th>ID</th><th>姓名</th> <th>号码</th> <th>时间</th> <th>地址</th> <th>IP</th> <th>来源</th> <th>状态/操作</th> </tr> </thead>
+                    var str_thead = "<table id='allMsg' class='table'><thead> <tr> <th>ID</th><th>姓名</th> <th>号码</th><th>QQ</th> <th>时间</th> <th>地址</th> <th>IP</th> <th>来源</th> <th>状态/操作</th> </tr> </thead><tbody>";
+                    var str_tbody = ""
+                    var update = '未审核'
+                    var remove = '删除'
+                    var E_delect = '"确定删除吗"'
+                    for (var i = 0; i < data.length; i++) {
+                        str_tbody += "<tr><td>" + data[i].id + "</td>" +
+                            "<td>" + data[i].name + "</td><td>" + data[i].tel + "</td>" +data[i].tel + "</td>"+
+                            "<td>" + data[i].time + "</td><td>" + data[i].ads + "</td>" +
+                            "<td>" + data[i].ip + "</td><td>" + data[i].url + "</td>" +
+                            "<td><input type='button' id=" + data[i].id + " class='upsta btn btn-default' value='" + data[i].sta + "'>" +
+                            // "<a href='?act=remove&id=" + data[i].id + "'  onclick='return confirm("+E_delect+")'>"+remove+"</a>"+
+                            "</td></tr>"
+                            // if (data[i].sta == '未审核') {
+                            //     //$('#'+var).
+                            //     //var a = document.getElementById("\""+data[i].id+"\"")
+                            //     console.log(document.getElementById("\""+data[i].id+"\""))
+                            //     //a.className='upsta btn btn-danger'
+                            //     //var steClass = $(data[i].id).attr('class')
+                            //    // sta = '已审核'
+                            // } else if (data[i].sta == '已审核') {
+                            //     //sta = '未审核'
+                            //     //document.getElementById(data[i].id).className='upsta btn btn-success';
+                            // } else {
+                            //     //sta = '已审核'
+                            // }
+                        }
+                    var str_table = str_thead + str_tbody
+                    document.getElementById('Article').innerHTML = str_table
+                    var a = document.getElementsByClassName("upsta")
+                    for(let i = 0;i<a.length;i++){
+                        if(a[i].value == '未审核'){
+                            a[i].className = 'upsta btn btn-danger'
+                        }else{
+                            a[i].className = 'upsta btn btn-success'
+                        }
+                    }
+                    console.log('已获取到最新留言数据')
+                    goPage(1, 5);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    // 状态码
+                    console.log(XMLHttpRequest.status);
+                    // 状态
+                    console.log(XMLHttpRequest.readyState);
+                    // 错误信息   
+                    console.log(textStatus);
+                }
+            });
+
+            $('.upsta').click(function () {
+                console.log($(this).attr('id'));
+                console.log($(this).attr('value'));
+                var sta = $(this).attr('value')
+                var setClass = $(this).attr('class');
+                var id = $(this).attr('id')
+                //var ids = '#'+id;
+                if (sta == '未审核') {
+                    sta = '已审核'
+                    $(this).attr("class", "upsta btn btn-success")
+                } else if (sta == '已审核') {
+                    sta = '未审核'
+                    $(this).attr("class", "upsta btn btn-danger")
+                } else {
+                    sta = '已审核'
+                }
+                var data = {
+                    sta: sta,
+                    id: id
+                }
+                $.ajax({
+                    type: "post",
+                    url: "/admin/upsta",
+                    data: data,
+                    success: function (rul) {
+                        console.log(rul)
+                        //$(this).attr('value') = sta
+                        var setValueId = document.getElementById(id)
+                        setValueId.value = sta
+                        console.log(setValueId)
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        // 状态码
+                        console.log(XMLHttpRequest.status);
+                        // 状态
+                        console.log(XMLHttpRequest.readyState);
+                        // 错误信息   
+                        console.log(textStatus);
+                    }
+                })
+            })
+        });
+    </script>
+    <table width="60%" align="right">
+        <tr>
+            <td>
+                <div id="barcon" name="barcon"></div>
+            </td>
+        </tr>
+    </table>
+    <script>
+        /**
+ * 分页函数
+ * pno--页数
+ * psize--每页显示记录数
+ * 分页部分是从真实数据行开始，因而存在加减某个常数，以确定真正的记录数
+ * 纯js分页实质是数据行全部加载，通过是否显示属性完成分页功能
+ **/
+        function goPage(pno, psize) {
+            var itable = document.getElementById("allMsg");
+            var num = itable.rows.length;//表格所有行数(所有记录数)
+            console.log(num);
+            var totalPage = 0;//总页数
+            var pageSize = psize;//每页显示行数
+            //总共分几页 
+            if (num / pageSize > parseInt(num / pageSize)) {
+                totalPage = parseInt(num / pageSize) + 1;
+            } else {
+                totalPage = parseInt(num / pageSize);
+            }
+            var currentPage = pno;//当前页数
+            var startRow = (currentPage - 1) * pageSize + 1;//开始显示的行  31 
+            var endRow = currentPage * pageSize;//结束显示的行   40
+            endRow = (endRow > num) ? num : endRow; 40
+            console.log(endRow);
+            //遍历显示数据实现分页
+            for (var i = 1; i < (num + 1); i++) {
+                var irow = itable.rows[i - 1];
+                if (i >= startRow && i <= endRow) {
+                    irow.style.display = "block";
+                } else {
+                    irow.style.display = "none";
+                }
+            }
+            var pageEnd = document.getElementById("pageEnd");
+            var tempStr = "共" + num + "条记录 分" + totalPage + "页 当前第" + currentPage + "页";
+            if (currentPage > 1) {
+                tempStr += "<a href=\"#\" onClick=\"goPage(" + (1) + "," + psize + ")\">首页</a>";
+                tempStr += "<a href=\"#\" onClick=\"goPage(" + (currentPage - 1) + "," + psize + ")\"><上一页</a>"
+            } else {
+                tempStr += "首页";
+                tempStr += "<上一页";
+            }
+
+            if (currentPage < totalPage) {
+                tempStr += "<a href=\"#\" onClick=\"goPage(" + (currentPage + 1) + "," + psize + ")\">下一页></a>";
+                tempStr += "<a href=\"#\" onClick=\"goPage(" + (totalPage) + "," + psize + ")\">尾页</a>";
+            } else {
+                tempStr += "下一页>";
+                tempStr += "尾页";
+            }
+
+            document.getElementById("barcon").innerHTML = tempStr;
+
+        }
+    </script>
+    <% include inc/footer %>
